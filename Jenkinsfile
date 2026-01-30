@@ -1,6 +1,6 @@
 
 pipeline {
-    agent { label 'sapo' }
+    agent { label 'any' }
 
     stages {
         stage('Build Docker Image') {
