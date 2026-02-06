@@ -1,22 +1,30 @@
 
 pipeline {
-    agent { label 'sapo' }
+    agent any
 
     stages {
-        stage('Build Docker Image') {
+
+        stage('Build .NET Project') {
             steps {
-                sh 'docker build -t jenkins-demo-app .'
+
+                sh """
+                docker run --rm \
+                  -v ${WORKSPACE}:/app \
+                  -w /app \
+                  mcr.microsoft.com/dotnet/sdk:8.0 \
+                  ls -R
+                """
+
+                sh """
+                docker run --rm \
+                  -v ${WORKSPACE}:/app \
+                  -w /app \
+                  mcr.microsoft.com/dotnet/sdk:8.0 \
+                  dotnet build
+                """
+
             }
         }
 
-        stage('Run Container') {
-            steps {
-                sh '''
-                  docker stop demo-container || true
-                  docker rm demo-container || true
-                  docker run -d -p 5000:5000 --name demo-container jenkins-demo-app
-                '''
-            }
-        }
     }
 }
